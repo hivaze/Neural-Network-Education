@@ -1,0 +1,7 @@
+me/hivaze/neural/Neuron.class
+me/hivaze/neural/NeuralNetwork.class
+me/hivaze/neural/NeuralNetwork$Initialization.class
+me/hivaze/neural/Neuron$Cache.class
+me/hivaze/neural/NeuronLayer.class
+me/hivaze/utils/SimpleCSV.class
+me/hivaze/neural/Neuron$Activation.class
