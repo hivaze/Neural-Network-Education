@@ -3,7 +3,7 @@ package me.hivaze.neural;
 import me.hivaze.utils.Pair;
 
 import java.io.*;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -25,8 +25,8 @@ public class NeuralNetwork {
         this.initializationMethod = initializationMethod;
     }
 
-    public NeuralNetwork(String filePath) throws IOException, ClassNotFoundException {
-        File file = Paths.get(filePath).toFile();
+    public NeuralNetwork(Path filePath) throws IOException, ClassNotFoundException {
+        File file = filePath.toFile();
         assert file.getName().endsWith(".dnn");
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             this.hiddenLayers = new NeuronLayer[ois.readInt()];
@@ -180,8 +180,8 @@ public class NeuralNetwork {
         return this;
     }
 
-    public NeuralNetwork saveTo(String path) throws IOException {
-        File file = Paths.get(path).toFile();
+    public NeuralNetwork saveTo(Path path) throws IOException {
+        File file = path.toFile();
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeInt(hiddenLayers.length);
             for (NeuronLayer layer = inputLayer; layer != null; layer = layer.getOutput()) {
