@@ -4,11 +4,9 @@ import me.hivaze.utils.Pair;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Function;
 
 public class NeuralNetwork {
 
@@ -43,17 +41,15 @@ public class NeuralNetwork {
         }
     }
 
-    public long mutationTrain(List<double[]> inputs, Function<double[], double[]> targetFunction, float mutateChance, double minError, long maxIterations) {
+    public long mutationTrain(List<Pair<double[]>> trainingDataset, float mutateChance, double minError, long maxIterations) {
         long iterations = 0;
-        List<double[]> outputs = new ArrayList<>(inputs.size());
-        inputs.forEach(input -> outputs.add(targetFunction.apply(input)));
         for (;;) {
             iterations++;
             boolean valid = true;
-            inputsLoop: for (int i = 0; i < inputs.size(); i++) {
-                double[] output = output(inputs.get(i));
+            inputsLoop: for (Pair<double[]> pair : trainingDataset) {
+                double[] output = output(pair.getFirst());
                 for (int j = 0; j < output.length; j++) {
-                    double error = Math.abs(outputs.get(i)[j] - output[j]);
+                    double error = Math.abs(pair.getSecond()[j] - output[j]);
                     if (error > minError) {
                         valid = false;
                         break inputsLoop;
@@ -81,14 +77,13 @@ public class NeuralNetwork {
     }
 
     public long backPropagationTrain(List<Pair<double[]>> trainingDataset, double learningSpeed, double[] minAllowedError, long maxIterations) {
-//        assert inputs.size() == targetOutputs.size();
         assert minAllowedError.length == outputLayer.getNeurons().length;
         assert inputLayer.getNeuron(0).hasCache();
         long iterations = 0;
         for (; iterations < maxIterations; iterations++) {
             double[] currentError = new double[outputLayer.getNeurons().length];
-            for (int i = 0; i < trainingDataset.size(); i++) {
-                double[] clearInput = trainingDataset.get(i).getFirst(), targetOutput = trainingDataset.get(i).getSecond();
+            for (Pair<double[]> pair : trainingDataset) {
+                double[] clearInput = pair.getFirst(), targetOutput = pair.getSecond();
                 double[] networkAnswer = output(clearInput);
                 double[] errors = new double[networkAnswer.length];
                 for (int j = 0; j < errors.length; j++) {

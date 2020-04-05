@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class DatasetUtils {
 
-    public static <T> Pair<List<T>> splitInRandomCondition(List<T> dataset, double firstPartPercent, double secondPartPercent) {
+    public static <T> Pair<List<T>> splitInRandomCondition(List<T> dataset, double firstPartPercent) {
         int dataSetSize = dataset.size(), firstPartEnd = (int) (dataSetSize * firstPartPercent);
         Collections.shuffle(dataset);
         return new Pair<>(dataset.subList(0, firstPartEnd), dataset.subList(firstPartEnd, dataSetSize));
