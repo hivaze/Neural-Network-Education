@@ -1,8 +1,13 @@
 package me.hivaze.neural;
 
+import me.hivaze.utils.Pair;
+
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 
 public class NeuralNetwork {
@@ -75,15 +80,15 @@ public class NeuralNetwork {
         return iterations;
     }
 
-    public long backPropagationTrain(List<double[]> inputs, List<double[]> targetOutputs, double learningSpeed, double[] minAllowedError, long maxIterations) {
-        assert inputs.size() == targetOutputs.size();
+    public long backPropagationTrain(List<Pair<double[]>> trainingDataset, double learningSpeed, double[] minAllowedError, long maxIterations) {
+//        assert inputs.size() == targetOutputs.size();
         assert minAllowedError.length == outputLayer.getNeurons().length;
         assert inputLayer.getNeuron(0).hasCache();
         long iterations = 0;
         for (; iterations < maxIterations; iterations++) {
             double[] currentError = new double[outputLayer.getNeurons().length];
-            for (int i = 0; i < inputs.size(); i++) {
-                double[] clearInput = inputs.get(i), targetOutput = targetOutputs.get(i);
+            for (int i = 0; i < trainingDataset.size(); i++) {
+                double[] clearInput = trainingDataset.get(i).getFirst(), targetOutput = trainingDataset.get(i).getSecond();
                 double[] networkAnswer = output(clearInput);
                 double[] errors = new double[networkAnswer.length];
                 for (int j = 0; j < errors.length; j++) {
@@ -129,12 +134,6 @@ public class NeuralNetwork {
             // else TODO: shuffle inputs & target
         }
         return iterations;
-    }
-
-    public long backPropagationTrain(List<double[]> inputs, Function<double[], double[]> targetFunction, double learningSpeed, double[] minAllowedError, long maxIterations) {
-        List<double[]> targetOutputs = new ArrayList<>(inputs.size());
-        inputs.forEach(input -> targetOutputs.add(targetFunction.apply(input)));
-        return backPropagationTrain(inputs, targetOutputs, learningSpeed, minAllowedError, maxIterations);
     }
 
     public double[] output(double[] inputs) {
